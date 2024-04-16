@@ -230,7 +230,7 @@
 			}
 
 			const geometry_pw = new THREE.BoxGeometry( 50, 100, 3);	
-			const material_pw = new THREE.MeshStandardMaterial( {color: 0x363636} );
+			const material_pw = new THREE.MeshStandardMaterial( {color: 0x303030} );
 			
 			const pw1 = new THREE.Mesh( geometry_pw, material_pw );
 			pw1.position.z = -188;
@@ -303,6 +303,20 @@
 			platform.position.z = 80;
 			scene.add(platform);
 
+			const geometry_pilar = new THREE.CylinderGeometry( 2, 2, 40, 32 ); 
+			const material_pilar = new THREE.MeshBasicMaterial( {color: 0xffff00} ); 	
+			for(let i = 0; i < 4; i++){
+				const pilar = new THREE.Mesh( geometry_pilar, material_pilar ); 
+				pilar.position.x = 132.5;
+				pilar.position.y = 10;
+				pilar.position.z = -117.5 + i * 80;
+				scene.add(pilar);
+			}
+			const pilar = new THREE.Mesh( geometry_pilar, material_pilar ); 
+			pilar.position.x = 192.5;
+			pilar.position.y = 10;
+			pilar.position.z = -117.5;
+			scene.add(pilar);
 
 		}
 
