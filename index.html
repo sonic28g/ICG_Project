@@ -62,6 +62,7 @@
 			hp: 10,
 			score: 0,
 			mail: 0,
+			on_ground: true,
         };
 
 
@@ -84,34 +85,37 @@
         function handleKeyDown(event) {
             const keyCode = event.code;
 			let limit = ((tiles/2)|0) *20;
-
-            switch (keyCode) {
-                case 'ArrowUp': 
-				case 'KeyW':
-					if(player.position.z > -limit){
+			switch (keyCode) {
+				case 'ArrowUp': 
+					if(player.position.z > -limit && player.on_ground){
 						player.position.z -= player.speed;
-					}
-
-                    break;
-                case 'ArrowDown':
-				case 'KeyS':
-					if(player.position.z < limit){
-                    	player.position.z += player.speed;
-					}
-                    break;
-                case 'ArrowLeft':
-				case 'KeyA':
-					if(player.position.x > -limit){
-                    	player.position.x -= player.speed;
-					}
-                    break;
-                case 'ArrowRight': 
-				case 'KeyD':
-					if(player.position.x < limit){
-                    	player.position.x += player.speed;
+						player.on_ground = !player.on_ground;
+						player.position.y = 10;
 					}
 					break;
-            }
+				case 'ArrowDown':
+					if(player.position.z < limit && player.on_ground){
+						player.position.z += player.speed;
+						player.on_ground = !player.on_ground;
+						player.position.y = 10;
+					}
+					break;
+				case 'ArrowLeft':
+					if(player.position.x > -limit && player.on_ground){
+						player.position.x -= player.speed;
+						player.on_ground = !player.on_ground;
+						player.position.y = 10;
+					}
+					break;
+				case 'ArrowRight': 
+					if(player.position.x < limit && player.on_ground){
+						player.position.x += player.speed;
+						player.on_ground = !player.on_ground;
+						player.position.y = 10;
+					}
+					break;
+			}
+
 		}
 
 
@@ -605,7 +609,8 @@
 
 			// Audio
 			let audio_pickUp = new Audio('sound_effects/pickUp.mp3');
-			let audio_money = new Audio('sound_effects/money.mp3');
+			let audio_money = new Audio('sound_effects/sellMail.mp3');
+			audio_money.volume = 0.25;
 			let music = new Audio('sound_effects/music_BadPiggies.mp3');
 			music.loop = true;
 			music.volume = 0.05;
@@ -636,6 +641,11 @@
 
                 // Update object positions based on the player's position
 				jogador.position.copy(player.position);
+				if(player.position.y <= 0){
+					player.on_ground = true;
+				}else{
+					player.position.y = player.position.y -1;
+				}
 
 				// Save position 
 				luz.position.copy(game.save_position);
