@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+	<title>Potty the MailPlant</title>
+
+	<meta charset="utf-8">
+
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+	<style>
+		body {
+
+			background-color: #ffffff;
+
+			/* To use the complete page */
+
+			margin: 0px;
+
+			overflow: hidden;
+		}
+	</style>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+
+	<button id="toggleButton" style="position: absolute; top: 10px; left: 10px;"><i id="volumeIcon" class="fa fa-volume-off"></i></button>
+
+	<div id="hud" style="position: absolute; top: 10px; right: 10px; color: white;">
+        <div id="health"></div>
+        <div id="mail"></div>
+        <div id="score"></div>
+    </div>
+
+	<script type="importmap">
+		{
+    		"imports": {
+     			"three": "https://threejs.org/build/three.module.js",
+				"three/orbitcontrols": "https://threejs.org/examples/jsm/controls/OrbitControls.js"
+			}
+		}
+	</script>
+
+	<script type="module">
+
+		import * as THREE from 'three';
+		import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+
+
+
+		const tiles = 11;
+
+
+
+		const player = {
+            position: new THREE.Vector3(0, 0, 0),
+            speed: 20, // Adjust the speed as needed
+			hp: 10,
+			score: 0,
+			mail: 0,
+        };
+
+
+
+		const game = {
+			save_position: new THREE.Vector3(0,-10,0),
+			delivery_pp: [
+				new THREE.Vector3(((tiles/2)|0) * 20, -10, ((tiles/2)|0) * 20),
+				new THREE.Vector3(-((tiles/2)|0) * 20, -10, ((tiles/2)|0) * 20),
+				new THREE.Vector3(((tiles/2)|0) * 20, -10, -((tiles/2)|0) * 20),
+				new THREE.Vector3(-((tiles/2)|0) * 20, -10, -((tiles/2)|0) * 20)
+			],
+			delivery_position: new THREE.Vector3(-((tiles/2)|0) * 20, -10, -((tiles/2)|0) * 20),
+			point_position: new THREE.Vector3(0,0,3*20),
+		};
+
+
+	
+
+        function handleKeyDown(event) {
+            const keyCode = event.code;
+			let limit = ((tiles/2)|0) *20;
+
+            switch (keyCode) {
+                case 'ArrowUp': 
+				case 'KeyW':
+					if(player.position.z > -limit){
+						player.position.z -= player.speed;
+					}
+
+                    break;
+                case 'ArrowDown':
+				case 'KeyS':
+					if(player.position.z < limit){
+                    	player.position.z += player.speed;
+					}
+                    break;
+                case 'ArrowLeft':
+				case 'KeyA':
+					if(player.position.x > -limit){
+                    	player.position.x -= player.speed;
+					}
+                    break;
+                case 'ArrowRight': 
+				case 'KeyD':
+					if(player.position.x < limit){
+                    	player.position.x += player.speed;
+					}
+					break;
+            }
+		}
+
+
+
+		function create_point(scene){
+			const geometry_box = new THREE.BoxGeometry( 15, 10, 1 ); 
+			const material_box = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
+			const box = new THREE.Mesh( geometry_box, material_box ); 
+
+			const edges = new THREE.EdgesGeometry( geometry_box ); 
+			const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) ); 
+
+			const geometry_lines = new THREE.BoxGeometry( 5, 0.2, 1 ); 
+			const material_lines = new THREE.MeshBasicMaterial( {color: 0x000000} ); 
+			const line1 = new THREE.Mesh( geometry_lines, material_lines );
+			line1.position.z = 0.1;
+			line1.position.x = -3;
+
+			const line2 = new THREE.Mesh( geometry_lines, material_lines );
+			line2.position.z = 0.1;
+			line2.position.x = -3;
+			line2.position.y = -1.2;
+
+			const geometry_selo = new THREE.BoxGeometry( 2, 3.5, 1 ); 
+			const material_selo = new THREE.MeshBasicMaterial( {color: 0xff0000} ); 
+			const selo = new THREE.Mesh( geometry_selo, material_selo );
+			selo.position.z = 0.1;
+			selo.position.x = 4.25;
+			selo.position.y = 1;
+
+			const point = new THREE.Group();
+			point.add(box);
+			point.add(line);
+			point.add(line1);
+			point.add(line2);
+			point.add(selo);
+			point.position.copy(game.point_position);
+			scene.add( point );
+			return point
+		}
+
+
+
+		function create_scenario(scene, x, y){
+			let xhalf = (x/2)|0;
+			let yhalf = (y/2)|0;
+
+			for(let i = 0; i < x; i++){
+				for(let j = 0; j < y; j++){
+					const geometry_f = new THREE.BoxGeometry( 20, 1, 20); 
+					const material_f = new THREE.MeshStandardMaterial( {color: 0xe8d68b} );
+					const f = new THREE.Mesh( geometry_f, material_f); 
+					f.position.set( (i-xhalf) * 20, -10, (j-yhalf) * 20);
+					scene.add( f );
+
+					const edges = new THREE.EdgesGeometry( geometry_f ); 
+					const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) ); 
+					line.position.set((i-xhalf) * 20, -10, (j-yhalf) * 20);
+					scene.add( line );
+				}
+			}
+
+			const geometry_f = new THREE.BoxGeometry( tiles*20, 200, tiles*20); 
+			const material_f = new THREE.MeshStandardMaterial( {color: 0x076873} );
+			const f = new THREE.Mesh( geometry_f, material_f ); 
+			f.position.y = -110;
+			scene.add( f );
+
+			const geometry_w1 = new THREE.BoxGeometry( 600,  800, 1); 
+			const material_w1 = new THREE.MeshStandardMaterial( {color: 0xc8c9b1} );
+			const w1 = new THREE.Mesh( geometry_w1, material_w1 );
+			w1.position.z = -300
+			scene.add(w1);
+
+			const geometry_w2 = new THREE.BoxGeometry( 10, 800, 900);
+			const material_w2 = new THREE.MeshStandardMaterial( {color: 0xfafcde} );
+			const w2 = new THREE.Mesh( geometry_w2, material_w2 );
+			w2.position.x = -200;
+			w2.position.z = -200;
+			scene.add(w2);
+
+			const w3 = new THREE.Mesh( geometry_w2, material_w2 );
+			w3.position.x = 200;
+			w3.position.z = -200;
+			scene.add(w3);
+
+			const geometry_p = new THREE.BoxGeometry( 500, 1, 75);
+			const material_p = new THREE.MeshStandardMaterial( {color: 0x363636} );
+			const passadeira1 = new THREE.Mesh( geometry_p, material_p );
+			passadeira1.position.z = -225;
+			scene.add(passadeira1);
+			const passadeira2 = new THREE.Mesh( geometry_p, material_p );
+			passadeira2.position.z = -225;
+			passadeira2.position.y = -21;
+			scene.add(passadeira2);
+
+			const geometry_cy = new THREE.CylinderGeometry( 10, 10, 75, 32 ); 
+			const material_cy = new THREE.MeshBasicMaterial( {color: 0x707070} ); 
+
+			const geometry_ring = new THREE.RingGeometry( 8, 10, 32 ); 
+			const material_ring = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.DoubleSide } );
+
+			for(let i = 0; i < 19; i++){
+				const cylinder = new THREE.Mesh( geometry_cy, material_cy); 
+				cylinder.rotation.x = Math.PI/2;
+				cylinder.position.z = -225;
+				cylinder.position.y = -10;
+				cylinder.position.x = -180 + i*20;
+				scene.add( cylinder );
+
+				const ring = new THREE.Mesh( geometry_ring, material_ring ); 
+				ring.position.z = -187;
+				ring.position.y = -10;
+				ring.position.x = -180 + i*20;
+				scene.add( ring );
+			}
+
+			const geometry_pw = new THREE.BoxGeometry( 50, 100, 3);	
+			const material_pw = new THREE.MeshStandardMaterial( {color: 0x363636} );
+			
+			const pw1 = new THREE.Mesh( geometry_pw, material_pw );
+			pw1.position.z = -188;
+			pw1.position.y = 30;
+			pw1.position.x = -180;
+			scene.add(pw1)
+
+			const pw2 = new THREE.Mesh( geometry_pw, material_pw );
+			pw2.position.z = -263;
+			pw2.position.y = 30;
+			pw2.position.x = -180;
+			scene.add(pw2)
+
+			const pw3 = new THREE.Mesh( geometry_pw, material_pw );
+			pw3.position.z = -188;
+			pw3.position.y = 30;
+			pw3.position.x = 180;
+			scene.add(pw3)
+
+			const pw4 = new THREE.Mesh( geometry_pw, material_pw );
+			pw4.position.z = -263;
+			pw4.position.y = 30;
+			pw4.position.x = 180;
+			scene.add(pw4)
+
+			const geometry_pt = new THREE.BoxGeometry( 50, 3, 78);	
+			const material_pt = new THREE.MeshStandardMaterial( {color: 0x363636} );
+			
+			const pt1 = new THREE.Mesh( geometry_pt, material_pt );
+			pt1.position.z = -225.5;
+			pt1.position.y = 80;
+			pt1.position.x = -180;
+			scene.add(pt1);
+
+			const pt2 = new THREE.Mesh( geometry_pt, material_pt );
+			pt2.position.z = -225.5;
+			pt2.position.y = 80;
+			pt2.position.x = 180;
+			scene.add(pt2);
+
+			const geometry_window = new THREE.BoxGeometry( 1, 110, 90);	
+			const material_window = new THREE.MeshStandardMaterial( {color: 0x87CEFA} );
+			const wind1 = new THREE.Mesh( geometry_window, material_window );
+			wind1.position.x = -195;
+			wind1.position.y = 50;
+			wind1.position.z = -110;
+			scene.add(wind1);
+			const wind2 = new THREE.Mesh( geometry_window, material_window );
+			wind2.position.x = -195;
+			wind2.position.y = 50;
+			wind2.position.z = -10;
+			scene.add(wind2);
+			const edges_wind = new THREE.EdgesGeometry( geometry_window ); 
+			const wb1 = new THREE.LineSegments(edges_wind, new THREE.LineBasicMaterial( { color: 0x000000} ) );
+			const wb2 = new THREE.LineSegments(edges_wind, new THREE.LineBasicMaterial( { color: 0x000000} ) );  
+			wb1.position.x = -195;
+			wb1.position.y = 50;
+			wb1.position.z = -110;
+			scene.add( wb1 );
+			wb2.position.x = -195;
+			wb2.position.y = 50;
+			wb2.position.z = -10;
+			scene.add( wb2 );
+
+			const geometry_plat = new THREE.BoxGeometry( 65, 1, 400);	
+			const material_plat = new THREE.MeshStandardMaterial( {color: 0x000000} );
+			const platform = new THREE.Mesh( geometry_plat, material_plat );
+			platform.position.x = 162.5;
+			platform.position.y = -10;
+			platform.position.z = 80;
+			scene.add(platform);
+
+
+		}
+
+
+
+		function updateSavePosition() {
+			const limit = ((tiles/2)|0);
+			do {
+				let x = Math.floor(Math.random() * tiles - limit) * 20;
+				let z = Math.floor(Math.random() * tiles - limit) * 20;
+
+				const isPositionInDeliveryPP = game.delivery_pp.some(position => position.x === x && position.z === z);
+
+				if (!isPositionInDeliveryPP) {
+					game.save_position.x = x;
+					game.save_position.z = z;
+					break; 
+				}
+
+			} while (true);
+		}
+
+
+
+		function updatePointPosition() {
+			const limit = ((tiles/2)|0);
+			do {
+				let x = Math.floor(Math.random() * tiles - limit) * 20;
+				let z = Math.floor(Math.random() * tiles - limit) * 20;
+
+				const isPositionInDeliveryPP = game.delivery_pp.some(position => position.x === x && position.z === z);
+				const isPositionInPlayerPP = (x == player.position.x && z == player.position.z);
+				if (!isPositionInDeliveryPP && !isPositionInPlayerPP) {
+					game.point_position.x = x;
+					game.point_position.z = z;
+					break; 
+				}
+
+			} while (true);
+		}
+
+
+
+		function updateDeliveryPosition(){
+			game.delivery_position = game.delivery_pp[Math.floor(Math.random() * 4)];
+		}
+
+
+		let live_ind = 1;
+		function updateLive(){
+			if(player.position.x == game.save_position.x && player.position.z == game.save_position.z){
+				if(player.hp < 10){
+					player.hp++;
+				}
+				live_ind = 0;
+			}else{
+				if(player.hp > 0 && live_ind > (4-1)){
+					player.hp--;
+					live_ind = 0;
+				}
+				live_ind += 1;
+			}
+
+			//console.log(player.hp)
+		}
+
+
+
+		function createPlayer(scene) {
+			const playerGroup = new THREE.Group();
+
+			// PLAYER
+			const geometry_vase = new THREE.BoxGeometry(20, 16, 20);
+			const material_vase = new THREE.MeshStandardMaterial({ color: 0xfd5800 });
+			const vase = new THREE.Mesh(geometry_vase, material_vase);
+			vase.position.y = -2;
+			playerGroup.add(vase);
+
+			const geometry_t = new THREE.TorusGeometry(14, 3, 8, 4);
+			const material_t = new THREE.MeshBasicMaterial({ color: 0xfd5800 });
+			const torus = new THREE.Mesh(geometry_t, material_t);
+			torus.rotation.x = Math.PI / 2;
+			torus.rotation.z = Math.PI / 4;
+			torus.position.y = 5;
+			playerGroup.add(torus);
+
+			const geometry_c = new THREE.BoxGeometry(20, 1, 20);
+			const material_c = new THREE.MeshStandardMaterial({ color: 0xA0522D });
+			const cube = new THREE.Mesh(geometry_c, material_c);
+			cube.position.y = 6;
+			playerGroup.add(cube);
+
+			const gs1 = new THREE.SphereGeometry(2, 32, 16);
+			const ms1 = new THREE.MeshBasicMaterial({ color: 0x808080 });
+			const sphere1 = new THREE.Mesh(gs1, ms1);
+			sphere1.position.y = 4.8;
+			sphere1.position.x = 6;
+			sphere1.position.z = 4;
+			playerGroup.add(sphere1);
+
+			const sphere2 = new THREE.Mesh(gs1, ms1);
+			sphere2.position.y = 5;
+			sphere2.position.x = 7;
+			sphere2.position.z = 2.5;
+			playerGroup.add(sphere2);
+
+			const gc = new THREE.CylinderGeometry(0.6, 0.6, 40, 32);
+			const mc = new THREE.MeshBasicMaterial({ color: 0x008000 });
+			const cylinder = new THREE.Mesh(gc, mc);
+			cylinder.position.y = 12;
+			playerGroup.add(cylinder);
+
+			const gc_2 = new THREE.CylinderGeometry(0.6, 0.6, 10, 32);
+			const mc_2 = new THREE.MeshBasicMaterial({ color: 0x008000 });
+			const caule = new THREE.Mesh(gc_2, mc_2);
+			caule.position.y = 25;
+			caule.position.x = -4.1;
+			caule.rotation.z = 1;
+			playerGroup.add(caule);
+
+			const caule_2 = new THREE.Mesh(gc_2, mc_2);
+			caule_2.position.y = 15;
+			caule_2.position.x = 4.1;
+			caule_2.rotation.z = 2 * Math.PI - 1;
+			playerGroup.add(caule_2);
+
+			scene.add(playerGroup);
+
+			return playerGroup;
+		}
+
+
+
+
+		function init() {
+
+			// The SCENE
+			const scene = new THREE.Scene();
+
+			create_scenario(scene, tiles, tiles);
+
+			const arrows = [];
+			const geometry_seta = new THREE.CircleGeometry( 5, 0 ); 
+			const material_seta = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } ); 
+			for(let i = 0; i < 19; i++){
+				const seta = new THREE.Mesh( geometry_seta, material_seta ); 
+				seta.rotation.x = -Math.PI/2;
+				seta.position.z = -225;
+				seta.position.y = 1;
+				seta.position.x = -180 + i*20;
+				scene.add( seta );
+				arrows.push(seta);
+			}
+
+			const box = new THREE.Group();
+			const geometry_box = new THREE.BoxGeometry( 30,  20, 30); 
+			const material_box = new THREE.MeshStandardMaterial( {color: 0xCD9F61} );
+			const box_c = new THREE.Mesh( geometry_box, material_box );
+			box.add(box_c);
+			const geometry_fita = new THREE.BoxGeometry( 5,  1, 30); 
+			const material_fita = new THREE.MeshStandardMaterial( {color: 0xA97835} );
+			const fita = new THREE.Mesh( geometry_fita, material_fita );
+			fita.position.y = 10;
+			box.add(fita);
+			const geometry_fita_m = new THREE.BoxGeometry( 5,  5, 1); 
+			const material_fita_m = new THREE.MeshStandardMaterial( {color: 0xA97835} );
+			const fita_m = new THREE.Mesh( geometry_fita_m, material_fita_m );
+			fita_m.position.y = 8;
+			fita_m.position.z = 15;
+			box.add(fita_m);
+			const geometry_bseta_b = new THREE.BoxGeometry( 3,  5, 1); 
+			const material_bseta_b = new THREE.MeshStandardMaterial( {color: 0x000000} );
+			const box_bseta_b = new THREE.Mesh( geometry_bseta_b, material_bseta_b );
+			box_bseta_b.position.z = 14.6;
+			box_bseta_b.position.x = -7;
+			box_bseta_b.position.y = -2;
+			box.add(box_bseta_b);
+			const geometry_bseta_t = new THREE.CircleGeometry( 3, 0 ); 
+			const material_bseta_t = new THREE.MeshBasicMaterial( { color: 0x000000 } );
+			const box_bseta_t = new THREE.Mesh( geometry_bseta_t, material_bseta_t ); 
+			box_bseta_t.position.z = 15.1;
+			box_bseta_t.position.x = -7;
+			box_bseta_t.position.y = 0;
+			box_bseta_t.rotation.z = Math.PI / 2;
+			box.add(box_bseta_t);
+			scene.add(box);
+			box.position.z = -225;
+			box.position.y = 10;
+			box.position.x = -200;
+			
+
+			// MENU
+			const geometry_m = new THREE.BoxGeometry( 70,  40, 1); 
+			const material_m = new THREE.MeshStandardMaterial( {color: 0xFF0000} );
+			const menu = new THREE.Mesh( geometry_m, material_m );
+			menu.position.z = -299;
+			menu.position.y = 200;
+			scene.add(menu);
+
+			menu.addEventListener('click', function(event) {
+				// Adicione a ação que você deseja executar aqui
+				console.log("O objeto menu foi clicado!");
+				// Por exemplo, você pode mudar a cor do objeto quando ele é clicado
+				menu.material.color.set(0x00FF00); // Define a cor do material para verde
+			});
+		
+			// POINT
+			const point = create_point(scene);
+
+			// PLAYER
+            const jogador = createPlayer(scene);
+			
+
+			// SAVE POSITION
+			const geometry_luz = new THREE.BoxGeometry( 20,  1, 20); 
+			const material_luz = new THREE.MeshStandardMaterial( {color: 0x00ffff} );
+			const luz = new THREE.Mesh( geometry_luz, material_luz );
+			luz.position.copy(game.save_position);
+			scene.add(luz);
+
+
+			// DELIVERY POSITION
+			const geometry_delivey = new THREE.BoxGeometry( 20,  1, 20); 
+			const material_delivey = new THREE.MeshStandardMaterial( {color: 0xff0000} );
+			const delivey = new THREE.Mesh( geometry_delivey, material_delivey );
+			delivey.position.copy(game.delivery_position);
+			scene.add(delivey);
+
+			
+
+			const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Adjust intensity as needed
+			scene.add(ambientLight);
+			
+
+			// The CAMERA --- A camera is added to the scene
+			const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+			camera.position.z = 180;
+			camera.position.y = 150;
+			//camera.position.x = 50;
+
+			// Point the camera to the center of the scene
+			camera.lookAt(0,0,0);
+			scene.add(camera);
+
+			console.log(camera);
+
+			
+
+			// The RENDERER --- To display the scene on the Web page
+			const renderer = new THREE.WebGLRenderer({ antialias: true });
+			renderer.setClearColor(new THREE.Color(0xffffff));
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+
+			// Add the output of the renderer
+			document.body.appendChild(renderer.domElement);
+			document.addEventListener('keydown', handleKeyDown);
+
+			// Render the scene
+			renderer.render(scene, camera);
+
+
+			let controls = new OrbitControls(camera, renderer.domElement);
+			controls.enableDamping = true;
+			controls.dampingFactor = 0.25;
+			controls.screenSpacePanning = false;
+			controls.maxPolarAngle = Math.PI / 2;
+			controls.enablePan = false;
+			controls.enableRotate = true; // Desativa a rotação
+			controls.enableZoom = true;   // Desativa o zoom
+
+			//camera.position.set(0, 200, -199); // Move a câmera mais perto do objeto
+			//controls.target.set(0, 200, -299); // Atualiza a posição do alvo
+			controls.update();
+			console.log(controls);
+
+		
+			setInterval(updateSavePosition, 10000);	// 10s
+			setInterval(updateDeliveryPosition, 5000);	// 5s
+			setInterval(updateLive, 250);	// 0.25s
+
+			
+			const point_speed = 0.02;
+			let rev = 1;
+
+
+			// Audio
+			let audio_pickUp = new Audio('sound_effects/pickUp.mp3');
+			let audio_money = new Audio('sound_effects/money.mp3');
+			let music = new Audio('sound_effects/music_BadPiggies.mp3');
+			music.loop = true;
+			music.volume = 0.05;
+			toggleButton.addEventListener('click', function() {
+                if (music.paused) {
+                    // Se a música estiver pausada, inicie-a
+                    music.play();
+                    // Altere o ícone para volume ligado
+                    volumeIcon.className = 'fa fa-volume-up';
+                } else {
+                    // Se a música estiver tocando, pause-a
+                    music.pause();
+                    // Altere o ícone para volume desligado
+                    volumeIcon.className = 'fa fa-volume-off';
+                }
+            });
+
+
+			function animate() {
+				//if(player.hp > 0){
+				//	requestAnimationFrame(animate);
+				//}
+
+				requestAnimationFrame(animate);
+
+                // Update controls
+                controls.update();
+
+                // Update object positions based on the player's position
+				jogador.position.copy(player.position);
+
+				// Save position 
+				luz.position.copy(game.save_position);
+
+				// Delivery position
+				delivey.position.copy(game.delivery_position);
+
+			
+				// Update point and player_mail
+				if(game.point_position.x == player.position.x && game.point_position.z == player.position.z ){
+					player.mail++;
+					audio_pickUp.play();
+					updatePointPosition();
+					point.position.copy(game.point_position);
+					//console.log("Mail: ", player.mail);
+					rev = 1;
+				}
+				if(point.position.y > 2){
+					rev = -1;
+				}
+				if(point.position.y < 0){
+					rev = 1;
+				}
+				point.position.y += rev * point_speed;
+
+				// Update setas e box
+				arrows.forEach(seta => {
+					seta.position.x += 0.1;
+					if(seta.position.x > -180+20*19 ){
+						seta.position.x = -180;
+					} 
+				});
+				box.position.x += 0.1;
+				if(box.position.x > -200+20*20 ){
+					box.position.x = -200;
+				} 
+
+
+				// Update score
+				if(game.delivery_position.x == player.position.x && game.delivery_position.z == player.position.z && player.mail != 0){
+					player.score += player.mail * 20;
+					player.mail = 0;
+					//console.log("Score: ", player.score);
+					audio_money.play();
+				}
+
+
+				// Upgate GUI
+				document.getElementById('health').textContent = 'Vida: ' + player.hp;
+				document.getElementById('mail').textContent = 'Mail: ' + player.mail;
+				document.getElementById('score').textContent = 'Score: ' + player.score;
+
+
+                // Render the scene
+                renderer.render(scene, camera);
+            }
+
+            // Start the animation loop
+            animate();
+		}
+
+		window.onload = init
+
+	</script>
+
+</body>
+
+</html>
