@@ -23,18 +23,30 @@
 		}
 	</style>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 
-	<button id="toggleButton" style="position: absolute; top: 10px; left: 10px;"><i id="volumeIcon" class="fa fa-volume-off"></i></button>
+	<div id = "gameInfo" style="display: none;">
+		<button id="toggleButton" style="position: absolute; top: 10px; left: 10px;"><i id="volumeIcon" class="fa fa-volume-off"></i></button>
 
-	<div id="hud" style="position: absolute; top: 10px; right: 10px; color: white;">
-        <div id="health"></div>
-        <div id="mail"></div>
-        <div id="score"></div>
-    </div>
+		<div id="hud" style="position: absolute; top: 10px; right: 10px; color: white;">
+			<div id="health"></div>
+			<div id="mail"></div>
+			<div id="score"></div>
+		</div>
+	</div>
+
+	<div class="container" id="menu">
+		<div class="half-page">
+		  	<button id = "start-btn">Start</button>
+		  	<button>Options</button>
+		  	<button>Instructions</button>
+		</div>
+	</div>
+
 
 	<script type="importmap">
 		{
@@ -77,8 +89,21 @@
 			],
 			delivery_position: new THREE.Vector3(-((tiles/2)|0) * 20, -10, -((tiles/2)|0) * 20),
 			point_position: new THREE.Vector3(0,0,3*20),
+			start: false,
 		};
 
+
+
+		function gamestart(event) {
+			const menu = document.getElementById("menu");
+			const gui = document.getElementById("gameInfo");
+			menu.style.display = "none";
+			gui.style.display = "block";
+			setInterval(updateSavePosition, 10000);	// 10s
+			setInterval(updateDeliveryPosition, 5000);	// 5s
+			setInterval(updateLive, 250);	// 0.25s
+			game.start = true;
+		}
 
 	
 
@@ -322,6 +347,25 @@
 			pilar.position.z = -117.5;
 			scene.add(pilar);
 
+
+			let geometry_wp = new THREE.BoxGeometry( 1, 30, 80);
+			const material_wp = new THREE.MeshBasicMaterial( {color: 0x00ff00} ); 	
+			for(let i = 0; i < 4; i++){
+				const wp = new THREE.Mesh( geometry_wp, material_wp ); 
+				wp.position.x = 132.5;
+				wp.position.y = 10;
+				wp.position.z = -77.5 + i * 80;
+				scene.add(wp);
+			}
+			geometry_wp = new THREE.BoxGeometry( 1, 30, 60);
+			const wp = new THREE.Mesh( geometry_wp, material_wp ); 
+			wp.position.x = 162.5;
+			wp.position.y = 10;
+			wp.position.z = -117.5;
+			wp.rotation.y = Math.PI/2;
+			scene.add(wp);
+			
+
 		}
 
 
@@ -511,21 +555,6 @@
 			box.position.y = 10;
 			box.position.x = -200;
 			
-
-			// MENU
-			const geometry_m = new THREE.BoxGeometry( 70,  40, 1); 
-			const material_m = new THREE.MeshStandardMaterial( {color: 0xFF0000} );
-			const menu = new THREE.Mesh( geometry_m, material_m );
-			menu.position.z = -299;
-			menu.position.y = 200;
-			scene.add(menu);
-
-			menu.addEventListener('click', function(event) {
-				// Adicione a ação que você deseja executar aqui
-				console.log("O objeto menu foi clicado!");
-				// Por exemplo, você pode mudar a cor do objeto quando ele é clicado
-				menu.material.color.set(0x00FF00); // Define a cor do material para verde
-			});
 		
 			// POINT
 			const point = create_point(scene);
@@ -579,6 +608,9 @@
 			document.body.appendChild(renderer.domElement);
 			document.addEventListener('keydown', handleKeyDown);
 
+			const start_button = document.getElementById("start-btn");
+			start_button.addEventListener('click', gamestart);
+
 			// Render the scene
 			renderer.render(scene, camera);
 
@@ -598,9 +630,9 @@
 			console.log(controls);
 
 		
-			setInterval(updateSavePosition, 10000);	// 10s
-			setInterval(updateDeliveryPosition, 5000);	// 5s
-			setInterval(updateLive, 250);	// 0.25s
+			//setInterval(updateSavePosition, 10000);	// 10s
+			//setInterval(updateDeliveryPosition, 5000);	// 5s
+			//setInterval(updateLive, 250);	// 0.25s
 
 			
 			const point_speed = 0.02;
@@ -635,69 +667,70 @@
 				//}
 
 				requestAnimationFrame(animate);
+				
+				if(game.start){
+					// Update controls
+					controls.update();
 
-                // Update controls
-                controls.update();
+					// Update object positions based on the player's position
+					jogador.position.copy(player.position);
+					if(player.position.y <= 0){
+						player.on_ground = true;
+					}else{
+						player.position.y = player.position.y -1;
+					}
 
-                // Update object positions based on the player's position
-				jogador.position.copy(player.position);
-				if(player.position.y <= 0){
-					player.on_ground = true;
-				}else{
-					player.position.y = player.position.y -1;
-				}
+					// Save position 
+					luz.position.copy(game.save_position);
 
-				// Save position 
-				luz.position.copy(game.save_position);
+					// Delivery position
+					delivey.position.copy(game.delivery_position);
 
-				// Delivery position
-				delivey.position.copy(game.delivery_position);
+				
+					// Update point and player_mail
+					if(game.point_position.x == player.position.x && game.point_position.z == player.position.z ){
+						player.mail++;
+						audio_pickUp.play();
+						updatePointPosition();
+						point.position.copy(game.point_position);
+						//console.log("Mail: ", player.mail);
+						rev = 1;
+					}
+					if(point.position.y > 2){
+						rev = -1;
+					}
+					if(point.position.y < 0){
+						rev = 1;
+					}
+					point.position.y += rev * point_speed;
 
-			
-				// Update point and player_mail
-				if(game.point_position.x == player.position.x && game.point_position.z == player.position.z ){
-					player.mail++;
-					audio_pickUp.play();
-					updatePointPosition();
-					point.position.copy(game.point_position);
-					//console.log("Mail: ", player.mail);
-					rev = 1;
-				}
-				if(point.position.y > 2){
-					rev = -1;
-				}
-				if(point.position.y < 0){
-					rev = 1;
-				}
-				point.position.y += rev * point_speed;
-
-				// Update setas e box
-				arrows.forEach(seta => {
-					seta.position.x += 0.1;
-					if(seta.position.x > -180+20*19 ){
-						seta.position.x = -180;
+					// Update setas e box
+					arrows.forEach(seta => {
+						seta.position.x += 0.1;
+						if(seta.position.x > -180+20*19 ){
+							seta.position.x = -180;
+						} 
+					});
+					box.position.x += 0.1;
+					if(box.position.x > -200+20*20 ){
+						box.position.x = -200;
 					} 
-				});
-				box.position.x += 0.1;
-				if(box.position.x > -200+20*20 ){
-					box.position.x = -200;
-				} 
 
 
-				// Update score
-				if(game.delivery_position.x == player.position.x && game.delivery_position.z == player.position.z && player.mail != 0){
-					player.score += player.mail * 20;
-					player.mail = 0;
-					//console.log("Score: ", player.score);
-					audio_money.play();
+					// Update score
+					if(game.delivery_position.x == player.position.x && game.delivery_position.z == player.position.z && player.mail != 0){
+						player.score += player.mail * 20;
+						player.mail = 0;
+						//console.log("Score: ", player.score);
+						audio_money.play();
+					}
+
+
+					// Upgate GUI
+					document.getElementById('health').textContent = 'Vida: ' + player.hp;
+					document.getElementById('mail').textContent = 'Mail: ' + player.mail;
+					document.getElementById('score').textContent = 'Score: ' + player.score;
 				}
-
-
-				// Upgate GUI
-				document.getElementById('health').textContent = 'Vida: ' + player.hp;
-				document.getElementById('mail').textContent = 'Mail: ' + player.mail;
-				document.getElementById('score').textContent = 'Score: ' + player.score;
-
 
                 // Render the scene
                 renderer.render(scene, camera);

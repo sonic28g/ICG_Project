@@ -1,0 +1,25 @@
+.container {
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    right: 0;
+    width: 50%;
+}
+
+.half-page {
+    position: relative;
+    width: 100%; 
+    height: 100%;
+    background-color: #f0f0f09a; 
+    justify-content: center;
+    align-items: center;
+    padding-top: 25%;
+}
+
+.half-page button {
+    display: block;
+    width: 200px; 
+    margin: 10% auto;
+
+}
