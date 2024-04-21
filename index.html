@@ -90,6 +90,9 @@
 			delivery_position: new THREE.Vector3(-((tiles/2)|0) * 20, -10, -((tiles/2)|0) * 20),
 			point_position: new THREE.Vector3(0,0,3*20),
 			start: false,
+			savePositionInterval: null,
+			deliveryPositionInterval: null,
+			liveUpdateInterval: null,
 		};
 
 
@@ -99,9 +102,9 @@
 			const gui = document.getElementById("gameInfo");
 			menu.style.display = "none";
 			gui.style.display = "block";
-			setInterval(updateSavePosition, 10000);	// 10s
-			setInterval(updateDeliveryPosition, 5000);	// 5s
-			setInterval(updateLive, 250);	// 0.25s
+			game.savePositionInterval = setInterval(updateSavePosition, 10000);	// 10s
+			game.deliveryPositionInterval = setInterval(updateDeliveryPosition, 5000);	// 5s
+			game.liveUpdateInterval = setInterval(updateLive, 250);	// 0.25s
 			game.start = true;
 		}
 
@@ -668,7 +671,7 @@
 
 				requestAnimationFrame(animate);
 				
-				if(game.start){
+				if(game.start && !game.end){
 					// Update controls
 					controls.update();
 
