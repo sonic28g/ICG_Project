@@ -23,3 +23,20 @@
     height: 5%;
     margin: 7.5% auto 7.5% auto;
 }
+
+
+.end_game{
+    background-color: rgb(48, 23, 72);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+}
+
+.end_game button{
+    display: block;
+    width: 100%; 
+    height: 40px;
+    margin-top: 20px;
+}

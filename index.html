@@ -47,6 +47,10 @@
 		</div>
 	</div>
 
+	<div class="end_game" style="display: none;" id="gameOver">
+		<button id = "menu-btn">Menu</button>
+	</div>
+
 
 	<script type="importmap">
 		{
@@ -90,6 +94,7 @@
 			delivery_position: new THREE.Vector3(-((tiles/2)|0) * 20, -10, -((tiles/2)|0) * 20),
 			point_position: new THREE.Vector3(0,0,3*20),
 			start: false,
+			end: false,
 			savePositionInterval: null,
 			deliveryPositionInterval: null,
 			liveUpdateInterval: null,
@@ -97,7 +102,7 @@
 
 
 
-		function gamestart(event) {
+		function gameStart(event) {
 			const menu = document.getElementById("menu");
 			const gui = document.getElementById("gameInfo");
 			menu.style.display = "none";
@@ -107,6 +112,34 @@
 			game.liveUpdateInterval = setInterval(updateLive, 250);	// 0.25s
 			game.start = true;
 		}
+
+
+
+		function gameEnd(event) {
+			const menu = document.getElementById("menu");
+			const gui = document.getElementById("gameInfo");
+			const gameOverScreen= document.getElementById("gameOver");
+			menu.style.display = "block";
+			gui.style.display = "none";
+			gameOverScreen.style.display = "none";
+			// RESET GAME AND PLAYER
+			game.end = false;
+			game.start = false;
+			clearInterval(game.savePositionInterval);
+			clearInterval(game.deliveryPositionInterval);
+			clearInterval(game.liveUpdateInterval);
+			game.savePositionInterval = null;
+			game.deliveryPositionInterval = null;
+			game.liveUpdateInterval = null;
+			game.save_position = new THREE.Vector3(0,-10,0);
+			game.delivery_position = new THREE.Vector3(-((tiles/2)|0) * 20, -10, -((tiles/2)|0) * 20);
+			game.point_position = new THREE.Vector3(0,0,3*20);
+			player.position = new THREE.Vector3(0, 0, 0);
+			player.hp = 10;
+			player.score = 0;
+			player.mail = 0;
+			player.on_ground = true;
+		}	
 
 	
 
@@ -635,7 +668,10 @@
 			document.addEventListener('keydown', handleKeyDown);
 
 			const start_button = document.getElementById("start-btn");
-			start_button.addEventListener('click', gamestart);
+			start_button.addEventListener('click', gameStart);
+
+			const menu_button = document.getElementById("menu-btn");
+			menu_button.addEventListener('click', gameEnd);
 
 			// Render the scene
 			renderer.render(scene, camera);
@@ -719,7 +755,6 @@
 						audio_pickUp.play();
 						updatePointPosition();
 						point.position.copy(game.point_position);
-						//console.log("Mail: ", player.mail);
 						rev = 1;
 					}
 					if(point.position.y > 2){
@@ -729,6 +764,8 @@
 						rev = 1;
 					}
 					point.position.y += rev * point_speed;
+					point.position.x = game.point_position.x;
+					point.position.z = game.point_position.z;
 
 					// Update setas e box
 					arrows.forEach(seta => {
@@ -756,6 +793,15 @@
 					document.getElementById('health').textContent = 'Vida: ' + player.hp;
 					document.getElementById('mail').textContent = 'Mail: ' + player.mail;
 					document.getElementById('score').textContent = 'Score: ' + player.score;
+
+					// End
+					if(player.hp <= 0){
+						game.end = true;
+					}
+				}
+				else if(game.end){
+					const gameOverScreen = document.getElementById("gameOver");
+					gameOverScreen.style.display = "block";
 				}
 
                 // Render the scene
