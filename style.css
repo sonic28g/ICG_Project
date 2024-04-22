@@ -14,7 +14,7 @@
     background-color: #f0f0f09a; 
     justify-content: center;
     align-items: center;
-    padding-top: 40%;
+    padding-top: 20%;
 }
 
 .half-page button {
@@ -26,7 +26,7 @@
 
 
 .end_game{
-    background-color: rgb(48, 23, 72);
+    background-color: #f0f0f0ca;
     position: fixed;
     top: 50%;
     left: 50%;
