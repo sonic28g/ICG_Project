@@ -328,7 +328,7 @@
 			scene.add( wb2 );
 
 			const geometry_plat = new THREE.BoxGeometry( 65, 1, 400);	
-			const material_plat = new THREE.MeshStandardMaterial( {color: 0x000000} );
+			const material_plat = new THREE.MeshStandardMaterial( {color: 0x777777} );
 			const platform = new THREE.Mesh( geometry_plat, material_plat );
 			platform.position.x = 162.5;
 			platform.position.y = -10;
@@ -336,7 +336,7 @@
 			scene.add(platform);
 
 			const geometry_pilar = new THREE.CylinderGeometry( 2, 2, 40, 32 ); 
-			const material_pilar = new THREE.MeshBasicMaterial( {color: 0xffff00} ); 	
+			const material_pilar = new THREE.MeshBasicMaterial( {color: 0xbbbbbb} ); 	
 			for(let i = 0; i < 4; i++){
 				const pilar = new THREE.Mesh( geometry_pilar, material_pilar ); 
 				pilar.position.x = 132.5;
@@ -352,7 +352,7 @@
 
 
 			let geometry_wp = new THREE.BoxGeometry( 1, 30, 80);
-			const material_wp = new THREE.MeshBasicMaterial( {color: 0x00ff00} ); 	
+			const material_wp = new THREE.MeshBasicMaterial( {color: 0xaaaaaa} ); 	
 			for(let i = 0; i < 4; i++){
 				const wp = new THREE.Mesh( geometry_wp, material_wp ); 
 				wp.position.x = 132.5;
@@ -493,6 +493,29 @@
 			caule_2.position.x = 4.1;
 			caule_2.rotation.z = 2 * Math.PI - 1;
 			playerGroup.add(caule_2);
+
+			for(let i = -1; i < 2; i = i+2){
+				const geometry_eye1 = new THREE.CircleGeometry( 2.5, 64 ); 
+				const material_eye1 = new THREE.MeshBasicMaterial( { color: 0xffffff } ); 
+				const eye1 = new THREE.Mesh( geometry_eye1, material_eye1 ); 
+				eye1.position.x = 4 * i;
+				eye1.position.y = -3; 
+				eye1.position.z = 10.1; 
+				playerGroup.add( eye1 );
+				const geometry_eye2 = new THREE.CircleGeometry( 1.5, 64 );
+				const material_eye2 = new THREE.MeshBasicMaterial( { color: 0x000000 } ); 
+				const eye2 = new THREE.Mesh( geometry_eye2, material_eye2 ); 
+				eye2.position.x = -4 * i;
+				eye2.position.y = -3; 
+				eye2.position.z = 10.2; 
+				playerGroup.add( eye2 );
+				const geometry_eye3 = new THREE.CircleGeometry( 0.3, 64 ); 
+				const eye3 = new THREE.Mesh( geometry_eye3, material_eye1 ); 
+				eye3.position.x = -4 * i + 0.5;
+				eye3.position.y = -3.5; 
+				eye3.position.z = 10.3; 
+				playerGroup.add( eye3 );
+			}
 
 			scene.add(playerGroup);
 
