@@ -108,7 +108,31 @@
 
 
 
+	function animateCameraAndControls() {
+		const targetCameraPosition = new THREE.Vector3(0, 150, 180);
+		const targetControlsPosition = new THREE.Vector3(0, 0, 0);
+		const duration = 1500; // ms
+		const startCameraPosition = game.camera.position.clone();
+		const startControlsPosition = game.controls.target.clone();
+		let startTime = null;
+
+		function update(time) {
+			if (startTime === null) startTime = time;
+			const progress = Math.min((time - startTime) / duration, 1); // Progresso da animação de 0 a 1
+			game.camera.position.copy(startCameraPosition).lerp(targetCameraPosition, progress);
+			game.controls.target.copy(startControlsPosition).lerp(targetControlsPosition, progress);
+			game.controls.update();
+			if (progress < 1) {
+				requestAnimationFrame(update);
+			}
+		}
+    	requestAnimationFrame(update);
+	}
+
+
+
 		function gameStart(event) {
+			animateCameraAndControls();
 			const menu = document.getElementById("menu");
 			const gui = document.getElementById("gameInfo");
 			menu.style.display = "none";
@@ -117,11 +141,6 @@
 			game.deliveryPositionInterval = setInterval(updateDeliveryPosition, 5000);	// 5s
 			game.liveUpdateInterval = setInterval(updateLive, 250);	// 0.25s
 			game.start = true;
-
-			game.camera.position.z = 180;
-			game.camera.position.y = 150;
-			game.controls.target.set(0, 0, 0); // Atualiza a posição do alvo
-			game.controls.update();
 		}
 
 
