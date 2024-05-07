@@ -102,6 +102,8 @@
 			savePositionInterval: null,
 			deliveryPositionInterval: null,
 			liveUpdateInterval: null,
+			camera: null,
+			controls: null
 		};
 
 
@@ -115,6 +117,11 @@
 			game.deliveryPositionInterval = setInterval(updateDeliveryPosition, 5000);	// 5s
 			game.liveUpdateInterval = setInterval(updateLive, 250);	// 0.25s
 			game.start = true;
+
+			game.camera.position.z = 180;
+			game.camera.position.y = 150;
+			game.controls.target.set(0, 0, 0); // Atualiza a posição do alvo
+			game.controls.update();
 		}
 
 
@@ -143,6 +150,10 @@
 			player.score = 0;
 			player.mail = 0;
 			player.on_ground = true;
+
+			game.camera.position.set(0, 200, -199); // Move a câmera mais perto do objeto
+			game.controls.target.set(0, 200, -299); // Atualiza a posição do alvo
+			game.controls.update();
 		}	
 
 	
@@ -569,6 +580,14 @@
 
 			create_scenario(scene, tiles, tiles);
 
+			const geometry_icon = new THREE.BoxGeometry( 60,  60, 1); 
+			const material_icon = new THREE.MeshStandardMaterial( {color: 0xFF0000} );
+			const icon = new THREE.Mesh( geometry_icon, material_icon );
+			icon.position.x = -window.innerWidth/20 + 7.5;
+			icon.position.y = 200;
+			icon.position.z = -299.9;
+			scene.add(icon)
+
 			const arrows = [];
 			const geometry_seta = new THREE.CircleGeometry( 5, 0 ); 
 			const material_seta = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } ); 
@@ -652,6 +671,7 @@
 			camera.position.z = 180;
 			camera.position.y = 150;
 			//camera.position.x = 50;
+			game.camera = camera
 
 			// Point the camera to the center of the scene
 			camera.lookAt(0,0,0);
@@ -690,10 +710,10 @@
 			controls.enableRotate = true; // Desativa a rotação
 			controls.enableZoom = true;   // Desativa o zoom
 
-			//camera.position.set(0, 200, -199); // Move a câmera mais perto do objeto
-			//controls.target.set(0, 200, -299); // Atualiza a posição do alvo
+			camera.position.set(0, 200, -199); // Move a câmera mais perto do objeto
+			controls.target.set(0, 200, -299); // Atualiza a posição do alvo
 			controls.update();
-			console.log(controls);
+			game.controls = controls;
 
 		
 			//setInterval(updateSavePosition, 10000);	// 10s
