@@ -90,6 +90,7 @@
 		const game = {
 			save_position: new THREE.Vector3(0,-10,0),
 			light_position: new THREE.Vector3(0,30,0),
+			save_light: null,
 			delivery_pp: [
 				new THREE.Vector3(((tiles/2)|0) * 20, -10, ((tiles/2)|0) * 20),
 				new THREE.Vector3(-((tiles/2)|0) * 20, -10, ((tiles/2)|0) * 20),
@@ -458,6 +459,7 @@
 					game.save_position.z = z;
 					game.light_position.x = x;
 					game.light_position.z = z;
+					game.save_light.intensity = 0;
 					break; 
 				}
 
@@ -712,7 +714,7 @@
                 // Give a name to the spot light
                 light.name = "light 1";
 
-				game.light = light;
+				game.save_light = light;
 
 
 			
@@ -821,8 +823,11 @@
 
 					// Save position 
 					luz.position.copy(game.save_position);
+					if(light.intensity < 100){
+						light.intensity++;
+					}
 					light.position.copy(game.light_position);
-					console.log(light.position);
+
 
 					// Delivery position
 					delivey.position.copy(game.delivery_position);
