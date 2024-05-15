@@ -91,6 +91,7 @@
 			save_position: new THREE.Vector3(0,-10,0),
 			light_position: new THREE.Vector3(0,30,0),
 			save_light: null,
+			light_blink_time: 1,
 			delivery_pp: [
 				new THREE.Vector3(((tiles/2)|0) * 20, -10, ((tiles/2)|0) * 20),
 				new THREE.Vector3(-((tiles/2)|0) * 20, -10, ((tiles/2)|0) * 20),
@@ -104,6 +105,8 @@
 			savePositionInterval: null,
 			deliveryPositionInterval: null,
 			liveUpdateInterval: null,
+			lightWarningInterval1: null,
+			lightWarningInterval2: null,
 			camera: null,
 			controls: null
 		};
@@ -142,6 +145,8 @@
 			game.savePositionInterval = setInterval(updateSavePosition, 10000);	// 10s
 			game.deliveryPositionInterval = setInterval(updateDeliveryPosition, 5000);	// 5s
 			game.liveUpdateInterval = setInterval(updateLive, 250);	// 0.25s
+			game.lightWarningInterval1 = setInterval(lightChangeWarning, 9250);	// 9s
+			game.lightWarningInterval2 = setInterval(lightChangeWarning, 9500);	// 9.5s
 			game.start = true;
 		}
 
@@ -160,11 +165,16 @@
 			clearInterval(game.savePositionInterval);
 			clearInterval(game.deliveryPositionInterval);
 			clearInterval(game.liveUpdateInterval);
+			clearInterval(game.lightWarningInterval1);
+			clearInterval(game.lightWarningInterval2);
 			game.savePositionInterval = null;
 			game.deliveryPositionInterval = null;
 			game.liveUpdateInterval = null;
+			game.lightWarningInterval1 = null,
+			game.lightWarningInterval2 = null,
 			game.save_position = new THREE.Vector3(0,-10,0);
 			game.light_position = new THREE.Vector3(0,30,0);
+			game.light_blink_time = 1;
 			game.delivery_position = new THREE.Vector3(-((tiles/2)|0) * 20, -10, -((tiles/2)|0) * 20);
 			game.point_position = new THREE.Vector3(0,0,3*20);
 			player.position = new THREE.Vector3(0, 0, 0);
@@ -459,11 +469,24 @@
 					game.save_position.z = z;
 					game.light_position.x = x;
 					game.light_position.z = z;
+					game.light_blink_time = 1;
 					game.save_light.intensity = 0;
 					break; 
 				}
 
 			} while (true);
+			clearInterval(game.lightWarningInterval1);
+			clearInterval(game.lightWarningInterval2);
+			game.lightWarningInterval1 = setInterval(lightChangeWarning, 9250);	// 9.3s
+			game.lightWarningInterval2 = setInterval(lightChangeWarning, 9500);	// 9.5s
+		}
+
+
+
+		function lightChangeWarning(){
+			console.log("OI :D");
+			game.light_blink_time = 5;
+			game.save_light.intensity = 0;
 		}
 
 
@@ -824,7 +847,7 @@
 					// Save position 
 					luz.position.copy(game.save_position);
 					if(light.intensity < 100){
-						light.intensity++;
+						light.intensity += game.light_blink_time;
 					}
 					light.position.copy(game.light_position);
 
