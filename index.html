@@ -217,14 +217,15 @@
 
 		function create_point(scene){
 			const geometry_box = new THREE.BoxGeometry( 15, 10, 1 ); 
-			const material_box = new THREE.MeshBasicMaterial( {color: 0xffffff} ); 
+			const material_box = new THREE.MeshPhongMaterial( {color: 0xffffff} ); 
 			const box = new THREE.Mesh( geometry_box, material_box ); 
+			box.castShadow = true;
 
 			const edges = new THREE.EdgesGeometry( geometry_box ); 
 			const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) ); 
 
 			const geometry_lines = new THREE.BoxGeometry( 5, 0.2, 1 ); 
-			const material_lines = new THREE.MeshBasicMaterial( {color: 0x000000} ); 
+			const material_lines = new THREE.MeshPhongMaterial( {color: 0x000000} ); 
 			const line1 = new THREE.Mesh( geometry_lines, material_lines );
 			line1.position.z = 0.1;
 			line1.position.x = -3;
@@ -235,7 +236,7 @@
 			line2.position.y = -1.2;
 
 			const geometry_selo = new THREE.BoxGeometry( 2, 3.5, 1 ); 
-			const material_selo = new THREE.MeshBasicMaterial( {color: 0xff0000} ); 
+			const material_selo = new THREE.MeshPhongMaterial( {color: 0xff0000} ); 
 			const selo = new THREE.Mesh( geometry_selo, material_selo );
 			selo.position.z = 0.1;
 			selo.position.x = 4.25;
@@ -261,32 +262,34 @@
 			for(let i = 0; i < x; i++){
 				for(let j = 0; j < y; j++){
 					const geometry_f = new THREE.BoxGeometry( 20, 1, 20); 
-					const material_f = new THREE.MeshStandardMaterial( {color: 0xe8d68b} );
-					const f = new THREE.Mesh( geometry_f, material_f); 
-					f.position.set( (i-xhalf) * 20, -10, (j-yhalf) * 20);
-					scene.add( f );
+					const material_f = new THREE.MeshPhongMaterial( {color: 0xe8d68b} );
+					const floor_square = new THREE.Mesh( geometry_f, material_f); 
+					floor_square.position.set( (i-xhalf) * 20, -10, (j-yhalf) * 20);
+					floor_square.receiveShadow = true;
+					scene.add( floor_square );
 
 					const edges = new THREE.EdgesGeometry( geometry_f ); 
 					const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) ); 
 					line.position.set((i-xhalf) * 20, -10, (j-yhalf) * 20);
+					line.receiveShadow = true;
 					scene.add( line );
 				}
 			}
 
 			const geometry_f = new THREE.BoxGeometry( tiles*20, 200, tiles*20); 
-			const material_f = new THREE.MeshStandardMaterial( {color: 0x076873} );
+			const material_f = new THREE.MeshPhongMaterial( {color: 0x076873} );
 			const f = new THREE.Mesh( geometry_f, material_f ); 
 			f.position.y = -110;
 			scene.add( f );
 
 			const geometry_w1 = new THREE.BoxGeometry( 600,  800, 1); 
-			const material_w1 = new THREE.MeshStandardMaterial( {color: 0xc8c9b1} );
+			const material_w1 = new THREE.MeshPhongMaterial( {color: 0xc8c9b1} );
 			const w1 = new THREE.Mesh( geometry_w1, material_w1 );
 			w1.position.z = -300
 			scene.add(w1);
 
 			const geometry_w2 = new THREE.BoxGeometry( 10, 800, 900);
-			const material_w2 = new THREE.MeshStandardMaterial( {color: 0xfafcde} );
+			const material_w2 = new THREE.MeshPhongMaterial( {color: 0xfafcde} );
 			const w2 = new THREE.Mesh( geometry_w2, material_w2 );
 			w2.position.x = -200;
 			w2.position.z = -200;
@@ -298,7 +301,7 @@
 			scene.add(w3);
 
 			const geometry_p = new THREE.BoxGeometry( 500, 1, 75);
-			const material_p = new THREE.MeshStandardMaterial( {color: 0x363636} );
+			const material_p = new THREE.MeshPhongMaterial( {color: 0x363636} );
 			const passadeira1 = new THREE.Mesh( geometry_p, material_p );
 			passadeira1.position.z = -225;
 			scene.add(passadeira1);
@@ -308,10 +311,10 @@
 			scene.add(passadeira2);
 
 			const geometry_cy = new THREE.CylinderGeometry( 10, 10, 75, 32 ); 
-			const material_cy = new THREE.MeshBasicMaterial( {color: 0x707070} ); 
+			const material_cy = new THREE.MeshPhongMaterial( {color: 0x707070} ); 
 
 			const geometry_ring = new THREE.RingGeometry( 8, 10, 32 ); 
-			const material_ring = new THREE.MeshBasicMaterial( { color: 0x000000, side: THREE.DoubleSide } );
+			const material_ring = new THREE.MeshPhongMaterial( { color: 0x000000, side: THREE.DoubleSide } );
 
 			for(let i = 0; i < 19; i++){
 				const cylinder = new THREE.Mesh( geometry_cy, material_cy); 
@@ -329,7 +332,7 @@
 			}
 
 			const geometry_pw = new THREE.BoxGeometry( 50, 100, 3);	
-			const material_pw = new THREE.MeshStandardMaterial( {color: 0x303030} );
+			const material_pw = new THREE.MeshPhongMaterial( {color: 0x303030} );
 			
 			const pw1 = new THREE.Mesh( geometry_pw, material_pw );
 			pw1.position.z = -188;
@@ -356,7 +359,7 @@
 			scene.add(pw4)
 
 			const geometry_pt = new THREE.BoxGeometry( 50, 3, 78);	
-			const material_pt = new THREE.MeshStandardMaterial( {color: 0x363636} );
+			const material_pt = new THREE.MeshPhongMaterial( {color: 0x363636} );
 			
 			const pt1 = new THREE.Mesh( geometry_pt, material_pt );
 			pt1.position.z = -225.5;
@@ -371,7 +374,7 @@
 			scene.add(pt2);
 
 			const geometry_window = new THREE.BoxGeometry( 1, 110, 90);	
-			const material_window = new THREE.MeshStandardMaterial( {color: 0x87CEFA} );
+			const material_window = new THREE.MeshPhongMaterial( {color: 0x87CEFA} );
 			const wind1 = new THREE.Mesh( geometry_window, material_window );
 			wind1.position.x = -195;
 			wind1.position.y = 50;
@@ -395,7 +398,7 @@
 			scene.add( wb2 );
 
 			const geometry_plat = new THREE.BoxGeometry( 65, 1, 400);	
-			const material_plat = new THREE.MeshStandardMaterial( {color: 0x777777} );
+			const material_plat = new THREE.MeshPhongMaterial( {color: 0x777777} );
 			const platform = new THREE.Mesh( geometry_plat, material_plat );
 			platform.position.x = 162.5;
 			platform.position.y = -10;
@@ -403,7 +406,7 @@
 			scene.add(platform);
 
 			const geometry_pilar = new THREE.CylinderGeometry( 2, 2, 40, 32 ); 
-			const material_pilar = new THREE.MeshBasicMaterial( {color: 0xbbbbbb} ); 	
+			const material_pilar = new THREE.MeshPhongMaterial( {color: 0xbbbbbb} ); 	
 			for(let i = 0; i < 4; i++){
 				const pilar = new THREE.Mesh( geometry_pilar, material_pilar ); 
 				pilar.position.x = 132.5;
@@ -419,7 +422,7 @@
 
 
 			let geometry_wp = new THREE.BoxGeometry( 1, 30, 80);
-			const material_wp = new THREE.MeshBasicMaterial( {color: 0xaaaaaa} ); 	
+			const material_wp = new THREE.MeshPhongMaterial( {color: 0xaaaaaa} ); 	
 			for(let i = 0; i < 4; i++){
 				const wp = new THREE.Mesh( geometry_wp, material_wp ); 
 				wp.position.x = 132.5;
@@ -508,13 +511,14 @@
 
 			// PLAYER
 			const geometry_vase = new THREE.BoxGeometry(20, 16, 20);
-			const material_vase = new THREE.MeshStandardMaterial({ color: 0xfd5800 });
+			const material_vase = new THREE.MeshPhongMaterial({ color: 0xfd5800 });
 			const vase = new THREE.Mesh(geometry_vase, material_vase);
 			vase.position.y = -2;
+			vase.castShadow = true;
 			playerGroup.add(vase);
 
 			const geometry_t = new THREE.TorusGeometry(14, 3, 8, 4);
-			const material_t = new THREE.MeshBasicMaterial({ color: 0xfd5800 });
+			const material_t = new THREE.MeshPhongMaterial({ color: 0xfd5800 });
 			const torus = new THREE.Mesh(geometry_t, material_t);
 			torus.rotation.x = Math.PI / 2;
 			torus.rotation.z = Math.PI / 4;
@@ -522,13 +526,13 @@
 			playerGroup.add(torus);
 
 			const geometry_c = new THREE.BoxGeometry(20, 1, 20);
-			const material_c = new THREE.MeshStandardMaterial({ color: 0xA0522D });
+			const material_c = new THREE.MeshPhongMaterial({ color: 0xA0522D });
 			const cube = new THREE.Mesh(geometry_c, material_c);
 			cube.position.y = 6;
 			playerGroup.add(cube);
 
 			const gs1 = new THREE.SphereGeometry(2, 32, 16);
-			const ms1 = new THREE.MeshBasicMaterial({ color: 0x808080 });
+			const ms1 = new THREE.MeshPhongMaterial({ color: 0x808080 });
 			const sphere1 = new THREE.Mesh(gs1, ms1);
 			sphere1.position.y = 4.8;
 			sphere1.position.x = 6;
@@ -542,13 +546,13 @@
 			playerGroup.add(sphere2);
 
 			const gc = new THREE.CylinderGeometry(0.6, 0.6, 40, 32);
-			const mc = new THREE.MeshBasicMaterial({ color: 0x008000 });
+			const mc = new THREE.MeshPhongMaterial({ color: 0x008000 });
 			const cylinder = new THREE.Mesh(gc, mc);
 			cylinder.position.y = 12;
 			playerGroup.add(cylinder);
 
 			const gc_2 = new THREE.CylinderGeometry(0.6, 0.6, 10, 32);
-			const mc_2 = new THREE.MeshBasicMaterial({ color: 0x008000 });
+			const mc_2 = new THREE.MeshPhongMaterial({ color: 0x008000 });
 			const caule = new THREE.Mesh(gc_2, mc_2);
 			caule.position.y = 25;
 			caule.position.x = -4.1;
@@ -563,14 +567,14 @@
 
 			for(let i = -1; i < 2; i = i+2){
 				const geometry_eye1 = new THREE.CircleGeometry( 2.5, 64 ); 
-				const material_eye1 = new THREE.MeshBasicMaterial( { color: 0xffffff } ); 
+				const material_eye1 = new THREE.MeshPhongMaterial( { color: 0xffffff } ); 
 				const eye1 = new THREE.Mesh( geometry_eye1, material_eye1 ); 
 				eye1.position.x = 4 * i;
 				eye1.position.y = -3; 
 				eye1.position.z = 10.1; 
 				playerGroup.add( eye1 );
 				const geometry_eye2 = new THREE.CircleGeometry( 1.5, 64 );
-				const material_eye2 = new THREE.MeshBasicMaterial( { color: 0x000000 } ); 
+				const material_eye2 = new THREE.MeshPhongMaterial( { color: 0x000000 } ); 
 				const eye2 = new THREE.Mesh( geometry_eye2, material_eye2 ); 
 				eye2.position.x = -4 * i;
 				eye2.position.y = -3; 
@@ -583,6 +587,8 @@
 				eye3.position.z = 10.3; 
 				playerGroup.add( eye3 );
 			}
+
+			playerGroup.castShadow = true;
 
 			scene.add(playerGroup);
 
@@ -600,7 +606,7 @@
 			create_scenario(scene, tiles, tiles);
 
 			const geometry_icon = new THREE.BoxGeometry( 60,  60, 1); 
-			const material_icon = new THREE.MeshStandardMaterial( {color: 0xFF0000} );
+			const material_icon = new THREE.MeshPhongMaterial( {color: 0xFF0000} );
 			const icon = new THREE.Mesh( geometry_icon, material_icon );
 			icon.position.x = -window.innerWidth/20 + 7.5;
 			icon.position.y = 200;
@@ -609,7 +615,7 @@
 
 			const arrows = [];
 			const geometry_seta = new THREE.CircleGeometry( 5, 0 ); 
-			const material_seta = new THREE.MeshBasicMaterial( { color: 0xFFFFFF } ); 
+			const material_seta = new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ); 
 			for(let i = 0; i < 19; i++){
 				const seta = new THREE.Mesh( geometry_seta, material_seta ); 
 				seta.rotation.x = -Math.PI/2;
@@ -622,29 +628,29 @@
 
 			const box = new THREE.Group();
 			const geometry_box = new THREE.BoxGeometry( 30,  20, 30); 
-			const material_box = new THREE.MeshStandardMaterial( {color: 0xCD9F61} );
+			const material_box = new THREE.MeshPhongMaterial( {color: 0xCD9F61} );
 			const box_c = new THREE.Mesh( geometry_box, material_box );
 			box.add(box_c);
 			const geometry_fita = new THREE.BoxGeometry( 5,  1, 30); 
-			const material_fita = new THREE.MeshStandardMaterial( {color: 0xA97835} );
+			const material_fita = new THREE.MeshPhongMaterial( {color: 0xA97835} );
 			const fita = new THREE.Mesh( geometry_fita, material_fita );
 			fita.position.y = 10;
 			box.add(fita);
 			const geometry_fita_m = new THREE.BoxGeometry( 5,  5, 1); 
-			const material_fita_m = new THREE.MeshStandardMaterial( {color: 0xA97835} );
+			const material_fita_m = new THREE.MeshPhongMaterial( {color: 0xA97835} );
 			const fita_m = new THREE.Mesh( geometry_fita_m, material_fita_m );
 			fita_m.position.y = 8;
 			fita_m.position.z = 15;
 			box.add(fita_m);
 			const geometry_bseta_b = new THREE.BoxGeometry( 3,  5, 1); 
-			const material_bseta_b = new THREE.MeshStandardMaterial( {color: 0x000000} );
+			const material_bseta_b = new THREE.MeshPhongMaterial( {color: 0x000000} );
 			const box_bseta_b = new THREE.Mesh( geometry_bseta_b, material_bseta_b );
 			box_bseta_b.position.z = 14.6;
 			box_bseta_b.position.x = -7;
 			box_bseta_b.position.y = -2;
 			box.add(box_bseta_b);
 			const geometry_bseta_t = new THREE.CircleGeometry( 3, 0 ); 
-			const material_bseta_t = new THREE.MeshBasicMaterial( { color: 0x000000 } );
+			const material_bseta_t = new THREE.MeshPhongMaterial( { color: 0x000000 } );
 			const box_bseta_t = new THREE.Mesh( geometry_bseta_t, material_bseta_t ); 
 			box_bseta_t.position.z = 15.1;
 			box_bseta_t.position.x = -7;
@@ -662,11 +668,13 @@
 
 			// PLAYER
             const jogador = createPlayer(scene);
+			jogador.castShadow = true;
+			jogador.receiveShadow = true;
 			
 
 			// SAVE POSITION
 			const geometry_luz = new THREE.BoxGeometry( 20,  1, 20); 
-			const material_luz = new THREE.MeshStandardMaterial( {color: 0x00ffff} );
+			const material_luz = new THREE.MeshPhongMaterial( {color: 0x00ffff} );
 			const luz = new THREE.Mesh( geometry_luz, material_luz );
 			luz.position.copy(game.save_position);
 			scene.add(luz);
@@ -674,15 +682,33 @@
 
 			// DELIVERY POSITION
 			const geometry_delivey = new THREE.BoxGeometry( 20,  1, 20); 
-			const material_delivey = new THREE.MeshStandardMaterial( {color: 0xff0000} );
+			const material_delivey = new THREE.MeshPhongMaterial( {color: 0xff0000} );
 			const delivey = new THREE.Mesh( geometry_delivey, material_delivey );
 			delivey.position.copy(game.delivery_position);
 			scene.add(delivey);
 
 			
+			// LIGHT
+			const ambientLight = new THREE.AmbientLight('rgb(255, 255, 255)', 1);
+                scene.add(ambientLight);
 
-			const ambientLight = new THREE.AmbientLight(0xffffff, 1); // Adjust intensity as needed
-			scene.add(ambientLight);
+                // ***************************** //
+                // Add point light souce (with shadows)
+                // ***************************** //
+                const light = new THREE.PointLight('rgb(255, 255, 255)',100);
+                light.decay = 1;
+                light.position.set(0, 30, 0);
+                scene.add(light);
+
+                // Setup shadow properties for the spotlight
+                light.castShadow = true;
+                light.shadow.mapSize.width = 2048;
+                light.shadow.mapSize.height = 2048;
+
+                // Give a name to the spot light
+                light.name = "light 1";
+
+
 			
 
 			// The CAMERA --- A camera is added to the scene
@@ -705,6 +731,8 @@
 			renderer.setClearColor(new THREE.Color(0xffffff));
 			renderer.setPixelRatio(window.devicePixelRatio);
 			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 			// Add the output of the renderer
 			document.body.appendChild(renderer.domElement);
