@@ -89,6 +89,7 @@
 
 		const game = {
 			save_position: new THREE.Vector3(0,-10,0),
+			light_position: new THREE.Vector3(0,30,0),
 			delivery_pp: [
 				new THREE.Vector3(((tiles/2)|0) * 20, -10, ((tiles/2)|0) * 20),
 				new THREE.Vector3(-((tiles/2)|0) * 20, -10, ((tiles/2)|0) * 20),
@@ -162,6 +163,7 @@
 			game.deliveryPositionInterval = null;
 			game.liveUpdateInterval = null;
 			game.save_position = new THREE.Vector3(0,-10,0);
+			game.light_position = new THREE.Vector3(0,30,0);
 			game.delivery_position = new THREE.Vector3(-((tiles/2)|0) * 20, -10, -((tiles/2)|0) * 20);
 			game.point_position = new THREE.Vector3(0,0,3*20);
 			player.position = new THREE.Vector3(0, 0, 0);
@@ -454,6 +456,8 @@
 				if (!isPositionInDeliveryPP) {
 					game.save_position.x = x;
 					game.save_position.z = z;
+					game.light_position.x = x;
+					game.light_position.z = z;
 					break; 
 				}
 
@@ -708,6 +712,8 @@
                 // Give a name to the spot light
                 light.name = "light 1";
 
+				game.light = light;
+
 
 			
 
@@ -815,6 +821,8 @@
 
 					// Save position 
 					luz.position.copy(game.save_position);
+					light.position.copy(game.light_position);
+					console.log(light.position);
 
 					// Delivery position
 					delivey.position.copy(game.delivery_position);
