@@ -24,6 +24,9 @@
 	</style>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="style.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&display=swap" rel="stylesheet">
 
 </head>
 
@@ -41,7 +44,7 @@
 
 	<div class="container" id="menu">
 		<div class="half-page">
-			<center><h1>Potty the MailPlant</h1></center>
+			<center><p class="cabin-sketch-bold" style="font-size: 64px;">Potty the MailPlant</p></center>
 		  	<button id = "start-btn">Start</button>
 		  	<button>Options</button>
 		  	<button>Instructions</button>
@@ -107,6 +110,7 @@
 			liveUpdateInterval: null,
 			lightWarningInterval1: null,
 			lightWarningInterval2: null,
+			lightSoundInterval: null,
 			camera: null,
 			controls: null
 		};
@@ -145,8 +149,9 @@
 			game.savePositionInterval = setInterval(updateSavePosition, 10000);	// 10s
 			game.deliveryPositionInterval = setInterval(updateDeliveryPosition, 5000);	// 5s
 			game.liveUpdateInterval = setInterval(updateLive, 250);	// 0.25s
-			game.lightWarningInterval1 = setInterval(lightChangeWarning, 9250);	// 9s
+			game.lightWarningInterval1 = setInterval(lightChangeWarning, 9750);	// 9.75s
 			game.lightWarningInterval2 = setInterval(lightChangeWarning, 9500);	// 9.5s
+			game.lightSoundInterval = setInterval(lightSoundWarning, 9350); // 9.1s
 			game.start = true;
 		}
 
@@ -162,16 +167,6 @@
 			// RESET GAME AND PLAYER
 			game.end = false;
 			game.start = false;
-			clearInterval(game.savePositionInterval);
-			clearInterval(game.deliveryPositionInterval);
-			clearInterval(game.liveUpdateInterval);
-			clearInterval(game.lightWarningInterval1);
-			clearInterval(game.lightWarningInterval2);
-			game.savePositionInterval = null;
-			game.deliveryPositionInterval = null;
-			game.liveUpdateInterval = null;
-			game.lightWarningInterval1 = null,
-			game.lightWarningInterval2 = null,
 			game.save_position = new THREE.Vector3(0,-10,0);
 			game.light_position = new THREE.Vector3(0,30,0);
 			game.light_blink_time = 1;
@@ -477,16 +472,24 @@
 			} while (true);
 			clearInterval(game.lightWarningInterval1);
 			clearInterval(game.lightWarningInterval2);
-			game.lightWarningInterval1 = setInterval(lightChangeWarning, 9250);	// 9.3s
+			clearInterval(game.lightSoundInterval);
+			game.lightWarningInterval1 = setInterval(lightChangeWarning, 9750);	// 9.25s
 			game.lightWarningInterval2 = setInterval(lightChangeWarning, 9500);	// 9.5s
+			game.lightSoundInterval = setInterval(lightSoundWarning, 9350); // 9.1s
 		}
 
 
 
 		function lightChangeWarning(){
-			console.log("OI :D");
 			game.light_blink_time = 5;
 			game.save_light.intensity = 0;
+		}
+
+
+
+		function lightSoundWarning(){
+			let audio_light = new Audio('sound_effects/lightBroken.mp3');
+			audio_light.play();
 		}
 
 
@@ -907,6 +910,18 @@
 					}
 				}
 				else if(game.end){
+					clearInterval(game.savePositionInterval);
+					clearInterval(game.deliveryPositionInterval);
+					clearInterval(game.liveUpdateInterval);
+					clearInterval(game.lightWarningInterval1);
+					clearInterval(game.lightWarningInterval2);
+					clearInterval(game.lightSoundInterval);
+					game.savePositionInterval = null;
+					game.deliveryPositionInterval = null;
+					game.liveUpdateInterval = null;
+					game.lightWarningInterval1 = null;
+					game.lightWarningInterval2 = null;
+					game.lightSoundInterval = null;
 					const gameOverScreen = document.getElementById("gameOver");
 					gameOverScreen.style.display = "block";
 					var scoreSpan = document.getElementById("score_val");
