@@ -824,7 +824,7 @@
 			audio_money.volume = 0.25;
 			let music = new Audio('sound_effects/music_BadPiggies.mp3');
 			music.loop = true;
-			music.volume = 0.05;
+			music.volume = 0.25;
 			toggleButton.addEventListener('click', function() {
                 if (music.paused) {
                     // Se a música estiver pausada, inicie-a
@@ -912,10 +912,22 @@
 
 
 					// Upgate GUI
-					document.getElementById('health').textContent = 'Vida: ' + player.hp;
+					document.getElementById('health').textContent = '';
 					document.getElementById('mail').textContent = 'Mail: ' + player.mail;
 					document.getElementById('score').textContent = 'Score: ' + player.score;
-
+					const healthIcon = document.createElement('img');
+					healthIcon.src = 'img/heart.png'; // Substitua pelo caminho da sua imagem
+					healthIcon.alt = 'Health Icon'; // Texto alternativo para acessibilidade
+					healthIcon.style.width = '46px'; // Define a largura da imagem
+					healthIcon.style.height = '46px'; // Define a altura da imagem
+					healthIcon.style.marginRight = '10px';
+					document.getElementById('health').appendChild(healthIcon);
+					// Criar o elemento de texto
+					const healthText = document.createElement('span');
+					healthText.className = 'cabin-sketch-regular';
+					healthText.textContent = 'Vida: ' + player.hp;
+					healthText.style.fontSize = '60px'; // Define o tamanho do texto
+					document.getElementById('health').appendChild(healthText);
 					// End
 					if(player.hp <= 0){
 						game.end = true;
