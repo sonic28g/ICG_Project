@@ -92,7 +92,7 @@
 
 		const game = {
 			save_position: new THREE.Vector3(0,-10,0),
-			light_position: new THREE.Vector3(0,30,0),
+			light_position: new THREE.Vector3(0,50,0),
 			save_light: null,
 			light_blink_time: 1,
 			delivery_pp: [
@@ -168,7 +168,7 @@
 			game.end = false;
 			game.start = false;
 			game.save_position = new THREE.Vector3(0,-10,0);
-			game.light_position = new THREE.Vector3(0,30,0);
+			game.light_position = new THREE.Vector3(0,50,0);
 			game.light_blink_time = 1;
 			game.delivery_position = new THREE.Vector3(-((tiles/2)|0) * 20, -10, -((tiles/2)|0) * 20);
 			game.point_position = new THREE.Vector3(0,0,3*20);
@@ -312,6 +312,7 @@
 			const material_p = new THREE.MeshPhongMaterial( {color: 0x363636} );
 			const passadeira1 = new THREE.Mesh( geometry_p, material_p );
 			passadeira1.position.z = -225;
+			passadeira1.receiveShadow = true;
 			scene.add(passadeira1);
 			const passadeira2 = new THREE.Mesh( geometry_p, material_p );
 			passadeira2.position.z = -225;
@@ -423,6 +424,7 @@
 			platform.position.x = 162.5;
 			platform.position.y = -10;
 			platform.position.z = 80;
+			platform.receiveShadow = true;
 			scene.add(platform);
 
 			const geometry_pilar = new THREE.CylinderGeometry( 2, 2, 40, 32 ); 
@@ -432,6 +434,8 @@
 				pilar.position.x = 132.5;
 				pilar.position.y = 10;
 				pilar.position.z = -117.5 + i * 80;
+				pilar.receiveShadow = true;
+				pilar.castShadow = true;
 				scene.add(pilar);
 			}
 			const pilar = new THREE.Mesh( geometry_pilar, material_pilar ); 
@@ -448,6 +452,8 @@
 				wp.position.x = 132.5;
 				wp.position.y = 10;
 				wp.position.z = -77.5 + i * 80;
+				wp.castShadow = true;
+				wp.receiveShadow = true;
 				scene.add(wp);
 			}
 			geometry_wp = new THREE.BoxGeometry( 1, 30, 60);
@@ -549,6 +555,63 @@
 		}
 
 
+		function createFolha(){
+			const folha = new THREE.Group();
+
+			const mc_2 = new THREE.MeshPhongMaterial({ color: 0x008000 });
+			const g_fp = new THREE.CircleGeometry( 2, 0 );
+			const g_fc = new THREE.CircleGeometry( 2, 32 );
+			const fp1 = new THREE.Mesh( g_fp,mc_2 );
+			const fc = new THREE.Mesh( g_fc,mc_2 );
+			const fp2 = new THREE.Mesh( g_fp,mc_2 );
+
+			fp1.castShadow = true;
+			fc.castShadow = true;
+			fp2.castShadow = true;
+			fp1.receiveShadow = true;
+			fc.receiveShadow = true;
+			fp2.receiveShadow = true;
+			
+			
+			fp1.position.set(0,0,0);
+			folha.add( fp1 );
+
+			fc.position.set(-2,0,0);
+			folha.add( fc );
+
+			fp2.position.set(-4,0,0);
+			fp2.rotation.z = Math.PI;
+			folha.add( fp2 );
+
+			const fp1b = new THREE.Mesh( g_fp,mc_2 );
+			const fcb = new THREE.Mesh( g_fc,mc_2 );
+			const fp2b = new THREE.Mesh( g_fp,mc_2 );
+
+			fp1b.castShadow = true;
+			fcb.castShadow = true;
+			fp2b.castShadow = true;
+			fp1b.receiveShadow = true;
+			fcb.receiveShadow = true;
+			fp2b.receiveShadow = true;
+			
+			
+			fp1b.position.set(0,0,0.1);
+			fp1b.rotation.x = Math.PI;
+			folha.add( fp1b );
+
+			fcb.position.set(-2,0,0.1);
+			fcb.rotation.x = Math.PI;
+			folha.add( fcb );
+
+			fp2b.position.set(-4,0,0.1);
+			fp2b.rotation.z = Math.PI;
+			fp2b.rotation.x = Math.PI;
+			folha.add( fp2b );
+
+			return folha;
+		}
+
+
 
 		function createPlayer(scene) {
 			const playerGroup = new THREE.Group();
@@ -559,6 +622,7 @@
 			const vase = new THREE.Mesh(geometry_vase, material_vase);
 			vase.position.y = -2;
 			vase.castShadow = true;
+			vase.receiveShadow = true;
 			playerGroup.add(vase);
 
 			const geometry_t = new THREE.TorusGeometry(14, 3, 8, 4);
@@ -567,12 +631,15 @@
 			torus.rotation.x = Math.PI / 2;
 			torus.rotation.z = Math.PI / 4;
 			torus.position.y = 5;
+			torus.castShadow = true;
+			torus.receiveShadow = true;
 			playerGroup.add(torus);
 
 			const geometry_c = new THREE.BoxGeometry(20, 1, 20);
 			const material_c = new THREE.MeshPhongMaterial({ color: 0xA0522D });
 			const cube = new THREE.Mesh(geometry_c, material_c);
 			cube.position.y = 6;
+			cube.receiveShadow = true;
 			playerGroup.add(cube);
 
 			const gs1 = new THREE.SphereGeometry(2, 32, 16);
@@ -593,6 +660,7 @@
 			const mc = new THREE.MeshPhongMaterial({ color: 0x008000 });
 			const cylinder = new THREE.Mesh(gc, mc);
 			cylinder.position.y = 12;
+			cylinder.castShadow = true;
 			playerGroup.add(cylinder);
 
 			const gc_2 = new THREE.CylinderGeometry(0.6, 0.6, 10, 32);
@@ -601,12 +669,14 @@
 			caule.position.y = 25;
 			caule.position.x = -4.1;
 			caule.rotation.z = 1;
+			caule.castShadow = true;
 			playerGroup.add(caule);
 
 			const caule_2 = new THREE.Mesh(gc_2, mc_2);
 			caule_2.position.y = 15;
 			caule_2.position.x = 4.1;
 			caule_2.rotation.z = 2 * Math.PI - 1;
+			caule_2.castShadow = true;
 			playerGroup.add(caule_2);
 
 			for(let i = -1; i < 2; i = i+2){
@@ -631,6 +701,38 @@
 				eye3.position.z = 10.3; 
 				playerGroup.add( eye3 );
 			}
+
+			//const folha1 = createFolha();
+			//folha1.position.set(-3,23,-0.5);
+			//folha1.rotation.x = -Math.PI /4;
+			//folha1.rotation.y = -Math.PI /5;
+			//playerGroup.add(folha1);
+
+			const folha1 = createFolha();
+			folha1.position.set(12.5,20, 2);
+			folha1.rotation.x = -Math.PI /4;
+			folha1.rotation.y = -Math.PI /5;
+			playerGroup.add(folha1);
+
+			const folha2 = createFolha();
+			folha2.position.set(-1.5, 32.5, 1);
+			folha2.rotation.x = -Math.PI /4;
+			folha2.rotation.y = Math.PI /5;
+			playerGroup.add(folha2);
+
+			const folha3 = createFolha();
+			folha3.position.set(4.5, 34, 2.75);
+			folha3.rotation.x = -Math.PI /4;
+			folha3.rotation.y = -Math.PI /5;
+			playerGroup.add(folha3);
+
+			const folha4 = createFolha();
+			folha4.position.set(-9,28.5, 1);
+			folha4.rotation.x = -Math.PI /4;
+			folha4.rotation.y = Math.PI /4;
+			playerGroup.add(folha4);
+
+
 
 			playerGroup.castShadow = true;
 
@@ -662,6 +764,7 @@
 			const material_seta = new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ); 
 			for(let i = 0; i < 19; i++){
 				const seta = new THREE.Mesh( geometry_seta, material_seta ); 
+				seta.receiveShadow = true;
 				seta.rotation.x = -Math.PI/2;
 				seta.position.z = -225;
 				seta.position.y = 1;
@@ -674,6 +777,7 @@
 			const geometry_box = new THREE.BoxGeometry( 30,  20, 30); 
 			const material_box = new THREE.MeshPhongMaterial( {color: 0xCD9F61} );
 			const box_c = new THREE.Mesh( geometry_box, material_box );
+			box_c.castShadow = true;
 			box.add(box_c);
 			const geometry_fita = new THREE.BoxGeometry( 5,  1, 30); 
 			const material_fita = new THREE.MeshPhongMaterial( {color: 0xA97835} );
@@ -741,7 +845,7 @@
                 // ***************************** //
                 const light = new THREE.PointLight('rgb(255, 255, 255)',100);
                 light.decay = 1;
-                light.position.set(0, 30, 0);
+                light.position.set(0, 50, 0);
                 scene.add(light);
 
                 // Setup shadow properties for the spotlight
@@ -753,6 +857,20 @@
                 light.name = "light 1";
 
 				game.save_light = light;
+
+
+				const light_pass = new THREE.PointLight('rgb(255, 255, 255)',50);
+                light_pass.decay = 1;
+                light_pass.position.set(0, 50, -225);
+                scene.add(light_pass);
+
+                // Setup shadow properties for the spotlight
+                light_pass.castShadow = true;
+                light_pass.shadow.mapSize.width = 2048;
+                light_pass.shadow.mapSize.height = 2048;
+
+                // Give a name to the spot light
+                light.name = "light 1";
 
 
 			
@@ -909,6 +1027,8 @@
 						//console.log("Score: ", player.score);
 						audio_money.play();
 					}
+
+					console.log(game.light_position);
 
 
 					// Upgate GUI
