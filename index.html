@@ -46,15 +46,24 @@
 		<div class="half-page">
 			<center><p class="cabin-sketch-bold" style="font-size: 64px;">Potty the MailPlant</p></center>
 		  	<button id = "start-btn">Start</button>
-		  	<button>Options</button>
 		  	<button>Instructions</button>
-			<button>Credits</button>
+			<button id = "credits-btn">Credits</button>
+		</div>
+	</div>
+
+	<div class="container" id="credits" style="display: none;">
+		<div class="half-page">
+			<center><p class="cabin-sketch-bold" style="font-size: 64px;">Credits</p></center>
+			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px;">Game created by: Guilherme Santos (107961)</p>
+			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px;">Models and Textures created by: Guilherme Santos (107961)</p>
+			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px;">Music: Bad Piggies Theme</p>
+			<button id="credits2menu-btn">Menu</button>
 		</div>
 	</div>
 
 	<div class="end_game" style="display: none;" id="gameOver">
-		<h1>Game Over</h1>
-		<p>Score: <span id="score_val"></span></p>
+		<center><p class="cabin-sketch-bold" style="font-size: 32px;">Game Over</p></center>
+		<center><p class="cabin-sketch-bold" style="font-size: 24px;">Score: <span id="score_val"></span></p></center>
 		<button id = "menu-btn">Menu</button>
 	</div>
 
@@ -182,6 +191,21 @@
 			game.controls.target.set(0, 200, -299); // Atualiza a posição do alvo
 			game.controls.update();
 		}	
+
+		function showCredits(){
+			const menu = document.getElementById("menu");
+			const credits = document.getElementById("credits");
+			menu.style.display = "none";
+			credits.style.display = "block";
+
+		}
+
+		function showMenufromCredits(){
+			const menu = document.getElementById("menu");
+			const credits = document.getElementById("credits");
+			menu.style.display = "block";
+			credits.style.display = "none";
+		}
 
 	
 
@@ -394,28 +418,28 @@
 			pt_back2.position.x = 195;
 			scene.add(pt_back2);
 
-			const geometry_window = new THREE.BoxGeometry( 1, 110, 90);	
+			const geometry_window = new THREE.BoxGeometry( 1, 60, 100);	
 			const material_window = new THREE.MeshPhongMaterial( {color: 0x87CEFA} );
 			const wind1 = new THREE.Mesh( geometry_window, material_window );
 			wind1.position.x = -195;
 			wind1.position.y = 50;
-			wind1.position.z = -110;
+			wind1.position.z = -100;
 			scene.add(wind1);
 			const wind2 = new THREE.Mesh( geometry_window, material_window );
 			wind2.position.x = -195;
 			wind2.position.y = 50;
-			wind2.position.z = -10;
+			wind2.position.z = 0;
 			scene.add(wind2);
 			const edges_wind = new THREE.EdgesGeometry( geometry_window ); 
 			const wb1 = new THREE.LineSegments(edges_wind, new THREE.LineBasicMaterial( { color: 0x000000} ) );
 			const wb2 = new THREE.LineSegments(edges_wind, new THREE.LineBasicMaterial( { color: 0x000000} ) );  
 			wb1.position.x = -195;
 			wb1.position.y = 50;
-			wb1.position.z = -110;
+			wb1.position.z = -100;
 			scene.add( wb1 );
 			wb2.position.x = -195;
 			wb2.position.y = 50;
-			wb2.position.z = -10;
+			wb2.position.z = 0;
 			scene.add( wb2 );
 
 			const geometry_plat = new THREE.BoxGeometry( 65, 1, 400);	
@@ -751,8 +775,11 @@
 
 			create_scenario(scene, tiles, tiles);
 
+			const IconLoader = new THREE.TextureLoader();
+			const IconTex = IconLoader.load('img/plant.png');
+
 			const geometry_icon = new THREE.BoxGeometry( 60,  60, 1); 
-			const material_icon = new THREE.MeshPhongMaterial( {color: 0xFF0000} );
+			const material_icon = new THREE.MeshPhongMaterial( { map: IconTex } );
 			const icon = new THREE.Mesh( geometry_icon, material_icon );
 			icon.position.x = -window.innerWidth/20 + 7.5;
 			icon.position.y = 200;
@@ -908,6 +935,13 @@
 			const menu_button = document.getElementById("menu-btn");
 			menu_button.addEventListener('click', gameEnd);
 
+			const c2m_button = document.getElementById("credits2menu-btn");
+			c2m_button.addEventListener('click', showMenufromCredits);
+
+			const credits_button = document.getElementById("credits-btn");
+			credits_button.addEventListener('click', showCredits);
+
+
 			// Render the scene
 			renderer.render(scene, camera);
 
@@ -1033,8 +1067,9 @@
 
 					// Upgate GUI
 					document.getElementById('health').textContent = '';
-					document.getElementById('mail').textContent = 'Mail: ' + player.mail;
+					document.getElementById('mail').textContent = '';
 					document.getElementById('score').textContent = 'Score: ' + player.score;
+
 					const healthIcon = document.createElement('img');
 					healthIcon.src = 'img/heart.png'; // Substitua pelo caminho da sua imagem
 					healthIcon.alt = 'Health Icon'; // Texto alternativo para acessibilidade
@@ -1045,9 +1080,29 @@
 					// Criar o elemento de texto
 					const healthText = document.createElement('span');
 					healthText.className = 'cabin-sketch-regular';
-					healthText.textContent = 'Vida: ' + player.hp;
+					healthText.textContent = 'Life: ' + player.hp;
 					healthText.style.fontSize = '60px'; // Define o tamanho do texto
+					if(player.hp <= 3){
+						healthText.style.color = 'red';
+					}else{
+						healthText.style.color = 'none';
+					}
 					document.getElementById('health').appendChild(healthText);
+
+					const mailIcon = document.createElement('img');
+					mailIcon.src = 'img/mail.png'; // Substitua pelo caminho da sua imagem
+					mailIcon.alt = 'Health Icon'; // Texto alternativo para acessibilidade
+					mailIcon.style.width = '46px'; // Define a largura da imagem
+					mailIcon.style.height = '46px'; // Define a altura da imagem
+					mailIcon.style.marginRight = '10px';
+					document.getElementById('mail').appendChild(mailIcon);
+					// Criar o elemento de texto
+					const mailText = document.createElement('span');
+					mailText.className = 'cabin-sketch-regular';
+					mailText.textContent = 'Mail: ' + player.mail;
+					mailText.style.fontSize = '60px'; // Define o tamanho do texto
+					document.getElementById('mail').appendChild(mailText);
+
 					// End
 					if(player.hp <= 0){
 						game.end = true;
