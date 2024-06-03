@@ -62,3 +62,14 @@ font-style: normal;
     font-style: normal;
     font-size: 60px;
 }
+
+.button-container {
+	display: flex;
+	justify-content: center;
+	gap: 20px; 
+}
+
+.button-container button {
+	padding: 10px 20px; 
+	cursor: pointer;
+}

@@ -42,21 +42,90 @@
 		</div>
 	</div>
 
+	<!---MENU--->
 	<div class="container" id="menu">
 		<div class="half-page">
 			<center><p class="cabin-sketch-bold" style="font-size: 64px;">Potty the MailPlant</p></center>
 		  	<button id = "start-btn">Start</button>
-		  	<button>Instructions</button>
+		  	<button id = "instructions-btn">Instructions</button>
 			<button id = "credits-btn">Credits</button>
 		</div>
 	</div>
 
+	<!---INSTRUCTIONS--->
+	<div class="container" id="instructions_1" style="display: none;">
+		<div class="half-page">
+			<center><p class="cabin-sketch-bold" style="font-size: 64px; margin-bottom: 10px; margin-top: -20px;">Instructions 1/5</p></center>
+			<center><img src="gif/plantaMovimento.gif" style="width:302px; height:189px;"></center>
+			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px; text-align: justify;">Use the <span class="cabin-sketch-bold">arrow buttons</span> on the keyboard to move Potty to the corresponding square</p>
+			
+			<div class="button-container">
+				<button class="instr2menu">Menu</button>
+				<button id="next1-btn">Next</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="container" id="instructions_2" style="display: none;">
+		<div class="half-page">
+			<center><p class="cabin-sketch-bold" style="font-size: 64px; margin-bottom: 10px; margin-top: -20px;">Instructions 2/5</p></center>
+			<center><img src="gif/plantaVida.gif" style="width:302px; height:189px;"></center>
+			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px; text-align: justify;">While Potty is <span class="cabin-sketch-bold">outside</span> the blue square, she will <span class="cabin-sketch-bold">lose</span> life, 
+				and while she is <span class="cabin-sketch-bold">inside</span> the blue square, she will <span class="cabin-sketch-bold">regain</span> life.</p>
+			
+			<div class="button-container">
+				<button class="instr2menu">Menu</button>
+				<button id="next2-btn">Next</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="container" id="instructions_3" style="display: none;">
+		<div class="half-page">
+			<center><p class="cabin-sketch-bold" style="font-size: 64px; margin-bottom: 10px; margin-top: -20px;">Instructions 3/5</p></center>
+			<center><img src="gif/plantaCorreio.gif" style="width:302px; height:189px;"></center>
+			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px; text-align: justify;">Move Potty over the <span class="cabin-sketch-bold">mail</span> to collect it.</p>
+			
+			<div class="button-container">
+				<button class="instr2menu">Menu</button>
+				<button id="next3-btn">Next</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="container" id="instructions_4" style="display: none;">
+		<div class="half-page">
+			<center><p class="cabin-sketch-bold" style="font-size: 64px; margin-bottom: 10px; margin-top: -20px;">Instructions 4/5</p></center>
+			<center><img src="gif/plantaPontos.gif" style="width:302px; height:189px;"></center>
+			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px; text-align: justify;">Move the Potty over the red square to exchange all the mail collected so far for <span class="cabin-sketch-bold">points</span>.</p>
+			
+			<div class="button-container">
+				<button class="instr2menu">Menu</button>
+				<button id="next4-btn">Next</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="container" id="instructions_5" style="display: none;">
+		<div class="half-page">
+			<center><p class="cabin-sketch-bold" style="font-size: 64px; margin-bottom: 10px; margin-top: -20px;">Instructions 5/5</p></center>
+			<center><img src="gif/plantaAleatorio.gif" style="width:302px; height:189px;"></center>
+			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px; text-align: justify;">Be careful that the blue and red squares are always <span class="cabin-sketch-bold">changing</span>!</p>
+			<center><p class="cabin-sketch-bold" style="font-size: 32px; margin: 20px;">Have Fun!</p></center>
+			<div class="button-container">
+				<button class="instr2menu">Menu</button>
+			</div>
+		</div>
+	</div>
+
+
+	<!---CREDITS--->
 	<div class="container" id="credits" style="display: none;">
 		<div class="half-page">
 			<center><p class="cabin-sketch-bold" style="font-size: 64px;">Credits</p></center>
-			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px;">Game created by: Guilherme Santos (107961)</p>
-			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px;">Models and Textures created by: Guilherme Santos (107961)</p>
-			<p class="cabin-sketch-regular" style="font-size: 32px; margin: 20px;">Music: Bad Piggies Theme</p>
+			<p class="cabin-sketch-bold" style="font-size: 32px; margin: 20px;">Game created by: <br><span class="cabin-sketch-regular">Guilherme Santos</span></p>
+			<p class="cabin-sketch-bold" style="font-size: 32px; margin: 20px;">Models and Textures created by: <br><span class="cabin-sketch-regular">Guilherme Santos</span></p>
+			<p class="cabin-sketch-bold" style="font-size: 32px; margin: 20px;">Music: <br><span class="cabin-sketch-regular">Bad Piggies Theme</span></p>
 			<button id="credits2menu-btn">Menu</button>
 		</div>
 	</div>
@@ -191,6 +260,53 @@
 			game.controls.target.set(0, 200, -299); // Atualiza a posição do alvo
 			game.controls.update();
 		}	
+
+		function showInstructions1(){
+			const menu = document.getElementById("menu");
+			const inst1 = document.getElementById("instructions_1");
+			menu.style.display = "none";
+			inst1.style.display = "block";
+			console.log("OI");
+		}
+		function showInstructions2(){
+			const inst1 = document.getElementById("instructions_1");
+			const inst2 = document.getElementById("instructions_2");
+			inst1.style.display = "none";
+			inst2.style.display = "block";
+		}
+		function showInstructions3(){
+			const inst2 = document.getElementById("instructions_2");
+			const inst3 = document.getElementById("instructions_3");
+			inst2.style.display = "none";
+			inst3.style.display = "block";
+		}
+		function showInstructions4(){
+			const inst3 = document.getElementById("instructions_3");
+			const inst4 = document.getElementById("instructions_4");
+			inst3.style.display = "none";
+			inst4.style.display = "block";
+		}
+		function showInstructions5(){
+			const inst4 = document.getElementById("instructions_4");
+			const inst5 = document.getElementById("instructions_5");
+			inst4.style.display = "none";
+			inst5.style.display = "block";
+		}
+		function intructions2menu(){
+			const menu = document.getElementById("menu");
+			const inst1 = document.getElementById("instructions_1");
+			const inst2 = document.getElementById("instructions_2");
+			const inst3 = document.getElementById("instructions_3");
+			const inst4 = document.getElementById("instructions_4");
+			const inst5 = document.getElementById("instructions_5");
+			menu.style.display = "block";
+			inst1.style.display = "none";
+			inst2.style.display = "none";
+			inst3.style.display = "none";
+			inst4.style.display = "none";
+			inst5.style.display = "none";
+		}
+
 
 		function showCredits(){
 			const menu = document.getElementById("menu");
@@ -940,6 +1056,19 @@
 
 			const credits_button = document.getElementById("credits-btn");
 			credits_button.addEventListener('click', showCredits);
+
+			const instructions_1_button = document.getElementById("instructions-btn");
+			instructions_1_button.addEventListener('click', showInstructions1);
+			const instructions_2_button = document.getElementById("next1-btn");
+			instructions_2_button.addEventListener('click', showInstructions2);
+			const instructions_3_button = document.getElementById("next2-btn");
+			instructions_3_button.addEventListener('click', showInstructions3);
+			const instructions_4_button = document.getElementById("next3-btn");
+			instructions_4_button.addEventListener('click', showInstructions4);
+			const instructions_5_button = document.getElementById("next4-btn");
+			instructions_5_button.addEventListener('click', showInstructions5);
+
+			document.querySelectorAll('.instr2menu').forEach(button => {button.addEventListener('click', intructions2menu );});
 
 
 			// Render the scene
